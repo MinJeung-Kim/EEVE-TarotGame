@@ -19,8 +19,8 @@ export const generateCardInterpretation = (
 
 // 원 카드 리딩
 const generateOneCardReading = (card: TarotCard, question: string): string => {
-  let interp = `🔮 **${card.name} (${card.nameEn})**\n\n`;
-  interp += `**핵심 키워드**: ${card.keywords.join(', ')}\n\n`;
+  let interp = `🔮 ${card.name} (${card.nameEn})\n\n`;
+  interp += `핵심 키워드: ${card.keywords.join(', ')}\n\n`;
   interp += `당신의 질문 "${question}"에 대해 ${card.name} 카드가 나왔습니다.\n\n`;
 
   // 특정 카드별 메시지
@@ -37,7 +37,7 @@ const generateOneCardReading = (card: TarotCard, question: string): string => {
     interp += `${card.keywords[0]}의 에너지가 강하게 나타나고 있습니다. 이 카드는 당신에게 ${card.keywords[1]}에 집중할 것을 권유합니다. 지금은 ${card.keywords[2]}가 필요한 시기입니다.`;
   }
 
-  interp += `\n\n✨ **오늘의 조언**: 작은 변화라도 시작해보세요. 당신의 직관을 믿으세요.`;
+  interp += `\n\n✨ 오늘의 조언: 작은 변화라도 시작해보세요. 당신의 직관을 믿으세요.`;
 
   return interp;
 };
@@ -46,22 +46,22 @@ const generateOneCardReading = (card: TarotCard, question: string): string => {
 const generateThreeCardReading = (cards: TarotCard[], question: string): string => {
   const [past, present, future] = cards;
 
-  let interp = `🔮 **쓰리 카드 리딩**\n\n`;
-  interp += `**질문**: ${question}\n\n`;
+  let interp = `🔮 쓰리 카드 리딩\n\n`;
+  interp += `질문: ${question}\n\n`;
   interp += `━━━━━━━━━━━━━━━━\n\n`;
 
   // 과거
-  interp += `🕰️ **과거 (${past.name})**\n`;
+  interp += `🕰️과거 (${past.name})\n`;
   interp += `${past.keywords.join(', ')}\n\n`;
   interp += `과거에 ${past.keywords[0]}의 경험을 하셨군요. 이것이 현재 상황의 배경이 되고 있습니다.\n\n`;
 
   // 현재
-  interp += `⏰ **현재 (${present.name})**\n`;
+  interp += `⏰ 현재 (${present.name})\n`;
   interp += `${present.keywords.join(', ')}\n\n`;
   interp += `지금 당신은 ${present.keywords[0]}의 에너지 속에 있습니다. ${present.keywords[1]}이/가 중요한 시기입니다.\n\n`;
 
   // 미래
-  interp += `🌅 **미래 (${future.name})**\n`;
+  interp += `🌅 미래 (${future.name})\n`;
   interp += `${future.keywords.join(', ')}\n\n`;
 
   if ([19, 17, 21].includes(future.id)) {
@@ -74,7 +74,7 @@ const generateThreeCardReading = (cards: TarotCard[], question: string): string 
 
   // 종합 조언
   interp += `\n\n━━━━━━━━━━━━━━━━\n\n`;
-  interp += `💫 **종합 조언**\n\n`;
+  interp += `💫 종합 조언\n\n`;
   interp += `과거의 ${past.keywords[0]}에서 벗어나, 현재 ${present.keywords[0]}에 집중하세요. 그러면 미래의 ${future.keywords[0]}이 당신을 기다리고 있을 것입니다. 우주는 항상 당신을 응원합니다.`;
 
   return interp;

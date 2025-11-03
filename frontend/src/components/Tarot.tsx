@@ -50,7 +50,7 @@ export default function TarotGame() {
       const result = await fetchTarotInterpretation(question, cardNames);
       
       // API 응답을 해석 텍스트로 조합
-      const fullInterpretation = `${result.interpretation}\n\n💫 **조언**\n${result.advice}`;
+      const fullInterpretation = `${result.interpretation}\n\n💫 조언\n${result.advice}`;
       setInterpretation(fullInterpretation);
       console.log('✅ Backend API로부터 해석을 받았습니다.');
     } catch (error) {
