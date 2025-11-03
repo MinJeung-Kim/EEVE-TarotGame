@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { TarotCard, ChatMessage, Stage } from '../utills/types';
 import { tarotCards } from '../utills/data';
+import type { TarotCard, ChatMessage, Stage } from '../utills/types';
 import { generateCardInterpretation, generateFollowUpResponse } from '../utills/interpretations';
 import WelcomeScreen from './WelcomeScreen';
 import QuestionScreen from './QuestionScreen';
