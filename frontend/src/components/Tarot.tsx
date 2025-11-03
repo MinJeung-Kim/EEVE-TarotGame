@@ -88,7 +88,7 @@ export default function TarotGame() {
   };
 
   // 추가 질문 처리
-  const handleFollowUp = () => {
+  const handleFollowUp = async () => {
     if (!followUpQuestion.trim()) return;
 
     const newChat: ChatMessage[] = [...chatHistory, {
@@ -99,16 +99,23 @@ export default function TarotGame() {
     setChatHistory(newChat);
     setIsGenerating(true);
 
-    setTimeout(() => {
-      const response = generateFollowUpResponse(followUpQuestion, selectedCards);
+    try {
+      const response = await generateFollowUpResponse(followUpQuestion, selectedCards);
 
       setChatHistory([...newChat, {
         type: 'ai' as const,
         content: response
       }]);
       setFollowUpQuestion('');
+    } catch (error) {
+      console.error('추가 질문 처리 중 오류:', error);
+      setChatHistory([...newChat, {
+        type: 'ai' as const,
+        content: '죄송합니다. 응답을 생성하는 중 오류가 발생했습니다. 다시 시도해주세요.'
+      }]);
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+    }
   };
 
   // Welcome 화면

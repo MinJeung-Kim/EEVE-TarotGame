@@ -80,10 +80,20 @@ const generateThreeCardReading = (cards: TarotCard[], question: string): string 
   return interp;
 };
 
-// 추가 질문에 대한 응답 생성
-export const generateFollowUpResponse = (
+// 추가 질문에 대한 응답 생성 (AI API 호출)
+export const generateFollowUpResponse = async (
   question: string,
   selectedCards: TarotCard[]
-): string => {
-  return `${question}에 대해 답변드리자면, 앞서 뽑으신 카드들이 보여주는 메시지를 좀 더 구체적으로 설명해드릴게요.\n\n선택된 카드 ${selectedCards.map(c => c.name).join(', ')}는 서로 조화를 이루며 당신의 상황을 말해주고 있습니다. 카드가 전하는 메시지를 마음 깊이 받아들이시고, 작은 실천부터 시작해보세요. 🌟`;
+): Promise<string> => {
+  try {
+    // api.ts에서 import한 함수 사용
+    const { fetchFollowUpResponse } = await import('./api');
+    const cardNames = selectedCards.map(c => c.name);
+    const response = await fetchFollowUpResponse(question, cardNames);
+    return response;
+  } catch (error) {
+    console.error('추가 질문 처리 중 오류:', error);
+    // 에러 발생 시 기본 응답 반환
+    return `${question}에 대해 답변드리자면, 앞서 뽑으신 카드들이 보여주는 메시지를 좀 더 구체적으로 설명해드릴게요.\n\n선택된 카드 ${selectedCards.map(c => c.name).join(', ')}는 서로 조화를 이루며 당신의 상황을 말해주고 있습니다. 카드가 전하는 메시지를 마음 깊이 받아들이시고, 작은 실천부터 시작해보세요. 🌟`;
+  }
 };

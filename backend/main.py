@@ -153,6 +153,57 @@ async def interpret_tarot(request: TarotRequest):
             detail=f"타로 해석 중 오류가 발생했습니다: {str(e)}"
         )
 
+class FollowUpRequest(BaseModel):
+    question: str
+    cards: List[str]
+
+class FollowUpResponse(BaseModel):
+    response: str
+
+@app.post("/api/followup", response_model=FollowUpResponse)
+async def followup_question(request: FollowUpRequest):
+    """
+    추가 질문에 대한 AI 응답 생성
+    """
+    try:
+        cards_str = ", ".join(request.cards)
+        
+        # OpenAI API 프롬프트 생성
+        system_prompt = """당신은 경험 많은 타로 리더입니다. 
+이미 타로 카드를 뽑은 상담자가 추가적인 질문을 하고 있습니다.
+이전에 뽑은 카드들의 의미를 바탕으로 상담자의 추가 질문에 대해 
+구체적이고 공감적인 답변을 제공하세요.
+답변은 한국어로 작성하며, 따뜻하고 지지적인 어조를 유지합니다."""
+
+        user_prompt = f"""상담자가 이전에 다음 카드들을 뽑았습니다: {cards_str}
+
+상담자의 추가 질문: {request.question}
+
+이 질문에 대해 이미 뽑은 카드들의 의미를 바탕으로 150-250자 정도로 답변해주세요.
+카드들이 전하는 메시지와 연결하여 구체적이고 실천 가능한 조언을 제공하세요."""
+
+        # OpenAI API 호출
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.8,
+            max_tokens=400
+        )
+        
+        ai_response = response.choices[0].message.content.strip()
+        
+        return FollowUpResponse(response=ai_response)
+        
+    except Exception as e:
+        print(f"Error in followup_question: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"추가 질문 처리 중 오류가 발생했습니다: {str(e)}"
+        )
+
 if __name__ == "__main__":
     print("🔮 EEVE Tarot API Server Starting...")
     print("📍 Server: http://localhost:8000")
