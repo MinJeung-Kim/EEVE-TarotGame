@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, Moon, Star, RotateCcw, Save, MessageCircle } from 'lucide-react';
 import type { TarotCard, ChatMessage, Stage } from '../utills/types';
-import { categories, spreadTypes, tarotCards } from '../utills/data';
+import { tarotCards } from '../utills/data';
+import WelcomeScreen from './WelcomeScreen';
+import QuestionScreen from './QuestionScreen';
+import SpreadScreen from './SpreadScreen';
+import ShuffleScreen from './ShuffleScreen';
+import ResultScreen from './ResultScreen';
  
 export default function TarotGame() {
    
@@ -138,410 +142,69 @@ export default function TarotGame() {
 
   // Welcome 화면
   if (stage === 'welcome') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex items-center justify-center p-4"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <div className="text-center max-w-2xl" style={{
-          display: "flex", flexDirection: "column", gap: "2rem", width: "100%", height: "100%", alignItems: "center", justifyContent: "center"
-        }}>
-          <div className="mb-8 relative" style={{ width: "50%" }}>
-            <Sparkles className="w-20 h-20 mx-auto text-yellow-300 animate-pulse" />
-            <Moon className="w-12 h-12 absolute top-0 right-1/3 text-purple-300 animate-bounce" />
-            <Star className="w-8 h-8 absolute bottom-0 left-1/3 text-blue-300 animate-pulse" />
-          </div>
-
-          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 mb-4">
-            EEVE Tarot
-          </h1>
-          <p className="text-xl text-purple-200 mb-8">
-            AI가 전하는 우주의 메시지
-          </p>
-
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8">
-            <p className="text-purple-100 text-lg leading-relaxed" style={{
-              padding: "1rem"
-            }}>
-              타로는 우주의 에너지를 읽어내는 신비로운 도구입니다.<br />
-              마음을 열고 질문을 던져보세요.<br />
-              카드가 당신에게 필요한 답을 전해줄 것입니다. 🔮
-            </p>
-          </div>
-
-          <button
-            onClick={() => setStage('question')}
-            className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-12 py-4 rounded-full text-xl font-semibold hover:scale-105 transform transition shadow-lg hover:shadow-pink-500/50"
-            style={{
-              padding: "1rem", cursor: "pointer"
-            }}>
-            시작하기 ✨
-          </button>
-        </div>
-      </div>
-    );
+    return <WelcomeScreen onStart={() => setStage('question')} />;
   }
 
   // 질문 입력 화면
   if (stage === 'question') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-4 py-12"
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-        }}>
-        <div className="max-w-3xl mx-auto"
-          style={{
-            width: '100%',
-            height: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '3rem',
-          }}>
-          <h2 className="text-4xl font-bold text-center text-yellow-300 mb-8">
-            무엇이 궁금하신가요?
-          </h2>
-
-          {/* 카테고리 선택 */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-6"
-            style={{
-              padding: '1rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}
-          >
-            <p className="text-purple-200 mb-4 text-center">질문 카테고리를 선택하세요</p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setCategory(cat.id)}
-                  className={`${category === cat.id ? cat.color : 'bg-white/20'} p-4 rounded-xl hover:scale-105 transform transition`
-                  } style={{ padding: '1rem', cursor: "pointer" }}
-                >
-                  <div className="text-3xl mb-2">{cat.icon}</div>
-                  <div className="text-white text-sm font-medium">{cat.name}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 질문 입력 */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-6" style={{
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-          }}>
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="예: 이직을 해야 할까요? / 나의 연애운이 궁금해요"
-              className="w-full bg-white/20 text-white placeholder-purple-300 rounded-xl p-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-              style={{ padding: '1rem' }} />
-
-            <div className="mt-4 flex flex-wrap gap-2" style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}>
-              <span className="text-purple-300 text-sm">예시:</span>
-              {['이직을 해야 할까요?', '나의 연애운은?', '이번 달 재물운은?'].map(example => (
-                <button
-                  key={example}
-                  onClick={() => setQuestion(example)}
-                  className="text-xs bg-white/20 text-purple-200 px-3 py-1 rounded-full hover:bg-white/30"
-                  style={{ padding: '1rem', cursor: "pointer" }}
-                >
-                  {example}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={() => setStage('welcome')}
-              className="flex-1 bg-white/20 text-white px-6 py-3 rounded-full hover:bg-white/30" style={{ padding: '1rem', cursor: "pointer" }}
-            >
-              이전
-            </button>
-            <button
-              onClick={() => {
-                if (question.trim()) {
-                  setStage('spread');
-                }
-              }}
-              disabled={!question.trim()}
-              className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:scale-105 transform transition disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ padding: '1rem', cursor: "pointer" }} >
-              다음
-            </button>
-          </div>
-        </div>
-      </div>
+      <QuestionScreen
+        question={question}
+        category={category}
+        onQuestionChange={setQuestion}
+        onCategoryChange={setCategory}
+        onBack={() => setStage('welcome')}
+        onNext={() => {
+          if (question.trim()) {
+            setStage('spread');
+          }
+        }}
+      />
     );
   }
 
   // 스프레드 선택 화면
   if (stage === 'spread') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-4 py-12"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <div className="max-w-4xl mx-auto" style={{
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: '3rem',
-        }}>
-          <h2 className="text-4xl font-bold text-center text-yellow-300 mb-4">
-            스프레드를 선택하세요
-          </h2>
-          <p className="text-center text-purple-200 mb-12">
-            "{question}"
-          </p>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {spreadTypes.map(spread => (
-              <button
-                key={spread.id}
-                onClick={() => {
-                  setSpreadType(spread.id);
-                  shuffleDeck();
-                  setStage('shuffle');
-                }}
-                className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 hover:bg-white/20 hover:scale-105 transform transition"
-                style={{
-                  padding: '1rem', cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                }}
-              >
-                <div className="text-5xl mb-4">
-                  {spread.id === 'one' ? '🃏' : '🎴'}
-                </div>
-                <h3 className="text-2xl font-bold text-yellow-300 mb-2">
-                  {spread.name}
-                </h3>
-                <p className="text-purple-200 mb-4">{spread.description}</p>
-                <p className="text-sm text-purple-300">
-                  {spread.cards}장의 카드
-                </p>
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => setStage('question')}
-            className="w-full bg-white/20 text-white px-6 py-3 rounded-full hover:bg-white/30"
-            style={{ cursor: 'pointer', padding: '1rem' }}
-          >
-            이전
-          </button>
-        </div>
-      </div>
+      <SpreadScreen
+        question={question}
+        onSpreadSelect={(spreadId) => {
+          setSpreadType(spreadId);
+          shuffleDeck();
+          setStage('shuffle');
+        }}
+        onBack={() => setStage('question')}
+      />
     );
   }
 
   // 카드 선택 화면
   if (stage === 'shuffle') {
-    const requiredCards = spreadType === 'one' ? 1 : 3;
-    const positions = spreadType === 'three' ? ['과거', '현재', '미래'] : ['오늘의 카드'];
-
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-4 py-12">
-        <div className="max-w-6xl mx-auto" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-        }}>
-          <h2 className="text-4xl font-bold text-center text-yellow-300 mb-4">
-            카드를 선택하세요
-          </h2>
-          <p className="text-center text-purple-200 mb-8">
-            {selectedCards.length}/{requiredCards} - {positions[selectedCards.length] || '완료'}
-          </p>
-
-          {/* 선택된 카드 표시 */}
-          {selectedCards.length > 0 && (
-            <div className="flex justify-center gap-4 mb-8">
-              {selectedCards.map((card, idx) => (
-                <div key={idx} className="bg-gradient-to-br from-yellow-400 to-pink-500 rounded-xl p-4 w-32 text-center" style={
-                  {
-                    padding: '1rem'
-                  }
-                }>
-                  <div className="text-4xl mb-2">{card.emoji}</div>
-                  <div className="text-white font-bold text-sm">{card.name}</div>
-                  <div className="text-white/80 text-xs">{positions[idx]}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 카드 덱 */}
-          <div className="grid grid-cols-4 md:grid-cols-7 gap-3 mb-8">
-            {shuffledDeck.slice(0, 21).map((card, idx) => (
-              <button
-                key={idx}
-                onClick={() => selectCard(card)}
-                disabled={selectedCards.length >= requiredCards}
-                className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl p-6 hover:scale-110 hover:rotate-3 transform transition disabled:opacity-50 disabled:cursor-not-allowed aspect-[2/3] flex items-center justify-center"
-                style={{ cursor: 'pointer', padding: '1rem' }} >
-                <Sparkles className="w-8 h-8 text-yellow-300" />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <ShuffleScreen
+        spreadType={spreadType}
+        selectedCards={selectedCards}
+        shuffledDeck={shuffledDeck}
+        onCardSelect={selectCard}
+      />
     );
   }
 
   // 결과 화면
   if (stage === 'result') {
-    const positions = spreadType === 'three' ? ['과거', '현재', '미래'] : ['오늘의 카드'];
-
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-4 py-12"
-        style={{
-          display: 'flex',
-          justifyContent: 'center', padding: '1rem'
-        }}>
-        <div className="max-w-4xl mx-auto" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-        }}>
-          <h2 className="text-4xl font-bold text-center text-yellow-300 mb-8">
-            카드 해석
-          </h2>
-
-          {/* 선택된 카드들 */}
-          <div className="flex justify-center gap-4 mb-8" style={{ padding: '1rem' }}>
-            {selectedCards.map((card, idx) => (
-              <div key={idx}
-                style={
-                  {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.3rem',
-                    padding: '1rem',
-                  }
-                }
-                className="bg-gradient-to-br from-yellow-400 to-pink-500 rounded-2xl p-6 w-40 text-center transform hover:scale-105 transition">
-                <div className="text-6xl mb-3">{card.emoji}</div>
-                <div className="text-white font-bold mb-1">{card.name}</div>
-                <div className="text-white/90 text-sm mb-2">{card.nameEn}</div>
-                <div className="text-white/80 text-xs font-semibold">{positions[idx]}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* AI 해석 */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8" style={{ padding: '1rem' }}>
-            {isGenerating ? (
-              <div className="text-center py-8">
-                <Sparkles className="w-12 h-12 mx-auto text-yellow-300 animate-spin mb-4" />
-                <p className="text-purple-200">AI가 카드를 해석하고 있습니다...</p>
-              </div>
-            ) : (
-              <div className="text-purple-100 whitespace-pre-wrap leading-relaxed">
-                {interpretation}
-              </div>
-            )}
-          </div>
-
-          {/* 추가 질문 섹션 */}
-          {!isGenerating && (
-            <>
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-6" style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                padding: '1rem',
-              }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <MessageCircle className="w-5 h-5 text-yellow-300" />
-                  <h3 className="text-xl font-bold text-yellow-300">추가 질문하기</h3>
-                </div>
-
-                {chatHistory.map((chat, idx) => (
-                  <div key={idx} className={`mb-4 ${chat.type === 'user' ? 'text-right' : 'text-left'}`}
-                    style={{
-                      background: 'none',
-                      textAlign: 'left',
-                      width: '100%',
-                    }}>
-                    <div className={`inline-block px-4 py-2 rounded-2xl 
-                      ${chat.type === 'user' ? 'bg-purple-500 text-white' : 'bg-white/20 text-purple-100'}`}
-                      style={{
-                        padding: '1rem'
-
-                      }}>
-                      {chat.content}
-                    </div>
-                  </div>
-                ))}
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={followUpQuestion}
-                    onChange={(e) => setFollowUpQuestion(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleFollowUp()}
-                    placeholder="더 궁금한 게 있으신가요?"
-                    className="flex-1 bg-white/20 text-white placeholder-purple-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                    disabled={isGenerating}
-                    style={{ padding: '1rem' }}
-                  />
-                  <button
-                    onClick={handleFollowUp}
-                    disabled={isGenerating || !followUpQuestion.trim()}
-                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-full hover:scale-105 transform transition disabled:opacity-50"
-                    style={{ cursor: "pointer", padding: '1rem' }}>
-                    전송
-                  </button>
-                </div>
-              </div>
-
-              {/* 액션 버튼 */}
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={resetReading}
-                  className="flex items-center justify-center gap-2 bg-white/20 text-white px-6 py-3 rounded-full hover:bg-white/30"
-                  style={{ cursor: "pointer", padding: '1rem' }}
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  새로운 리딩
-                </button>
-                <button
-                  onClick={() => alert('결과가 저장되었습니다! (데모 버전)')}
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-full hover:scale-105 transform transition"
-                  style={{ cursor: "pointer", padding: '1rem' }}>
-                  <Save className="w-5 h-5" />
-                  결과 저장
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+      <ResultScreen
+        spreadType={spreadType}
+        selectedCards={selectedCards}
+        interpretation={interpretation}
+        isGenerating={isGenerating}
+        followUpQuestion={followUpQuestion}
+        chatHistory={chatHistory}
+        onFollowUpQuestionChange={setFollowUpQuestion}
+        onFollowUpSubmit={handleFollowUp}
+        onReset={resetReading}
+        onSave={() => alert('결과가 저장되었습니다! (데모 버전)')}
+      />
     );
   }
 
