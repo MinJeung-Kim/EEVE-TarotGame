@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { tarotCards } from '../utills/data';
 import type { TarotCard, ChatMessage, Stage } from '../utills/types';
 import { generateCardInterpretation, generateFollowUpResponse } from '../utills/interpretations';
+import { fetchTarotInterpretation } from '../utills/api';
 import WelcomeScreen from './WelcomeScreen';
 import QuestionScreen from './QuestionScreen';
 import SpreadScreen from './SpreadScreen';
@@ -34,16 +35,35 @@ export default function TarotGame() {
     }
   };
 
-  // AI 해석 생성
-  const generateInterpretation = () => {
+  // AI 해석 생성 (Backend API 호출)
+  const generateInterpretation = async () => {
     setIsGenerating(true);
     setStage('result');
 
-    setTimeout(() => {
+    try {
+      // 선택된 카드 이름 배열 생성
+      const cardNames = selectedCards.map(card => card.name);
+      
+      console.log('🎴 카드 해석 요청:', { question, cardNames });
+      
+      // Backend API 호출
+      const result = await fetchTarotInterpretation(question, cardNames);
+      
+      // API 응답을 해석 텍스트로 조합
+      const fullInterpretation = `${result.interpretation}\n\n💫 **조언**\n${result.advice}`;
+      setInterpretation(fullInterpretation);
+      console.log('✅ Backend API로부터 해석을 받았습니다.');
+    } catch (error) {
+      console.warn('⚠️ Backend API 호출 실패, 로컬 해석을 사용합니다:', error);
+      console.info('💡 Tip: Backend 서버를 실행하려면 "cd backend && python main.py" 명령어를 사용하세요.');
+      
+      // API 실패 시 로컬 해석 사용 (fallback)
       const interp = generateCardInterpretation(selectedCards, spreadType, question);
-      setInterpretation(interp);
+      const fallbackMessage = '\n\n---\n\n⚠️ *현재 로컬 해석 모드로 실행 중입니다. Backend 서버를 실행하면 AI 기반 해석을 받을 수 있습니다.*';
+      setInterpretation(interp + fallbackMessage);
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   // 카드가 모두 선택되면 자동으로 해석 생성
