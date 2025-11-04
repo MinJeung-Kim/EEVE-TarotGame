@@ -67,7 +67,14 @@ export default function ResultScreen({
         {/* AI 해석 */}
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8" style={{ padding: '1rem' }}>
           {isGenerating ? (
-            <div className="text-center py-8">
+            <div className="text-center py-8"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2rem',
+            }}>
               <Sparkles className="w-12 h-12 mx-auto text-yellow-300 animate-spin mb-4" />
               <p className="text-purple-200">AI가 카드를 해석하고 있습니다...</p>
             </div>
