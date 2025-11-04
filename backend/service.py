@@ -54,6 +54,8 @@ class TarotService:
         Returns:
             카드별 키워드를 포함한 문자열
         """
+
+        print(f"Getting card keywords... RUNPOD_URL: {RUNPOD_URL} , EEVE_MODEL: {EEVE_MODEL}")
         card_context = []
         for card_name in cards:
             if card_name in CARD_MEANINGS:
@@ -108,7 +110,7 @@ class TarotService:
         timeout: int = DEFAULT_TIMEOUT
     ) -> str:
         """
-        Ollama API 호출
+        Ollama API 호출 (RunPod 프록시를 통해)
         
         Args:
             prompt: API에 전달할 프롬프트
@@ -122,31 +124,45 @@ class TarotService:
         Raises:
             Exception: API 호출 실패 시
         """
-        response = requests.post(
-            self.runpod_url,
-            json={
-                "prompt": prompt,
-                "stream": False,
-                "options": {
-                    "temperature": temperature,
-                    "num_predict": num_predict
-                }
-            },
-            timeout=timeout
-        )
+        # RunPod의 Ollama API 엔드포인트
+        api_endpoint = f"{self.runpod_url}"
         
-        if response.status_code != 200:
-            raise Exception(
-                f"Ollama API 오류: {response.status_code} - {response.text}"
+        payload = {
+            "model": self.eeve_model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": temperature,
+                "num_predict": num_predict
+            }
+        }
+        
+        try:
+            response = requests.post(
+                api_endpoint,
+                json=payload,
+                timeout=timeout
             )
-        
-        response_data = response.json()
-        full_response = response_data.get("response", "").strip()
-        
-        if not full_response:
-            raise Exception("Ollama 모델로부터 응답을 받지 못했습니다.")
-        
-        return full_response
+            
+            if response.status_code != 200:
+                raise Exception(
+                    f"Ollama API 오류: {response.status_code} - {response.text}"
+                )
+            
+            response_data = response.json()
+            full_response = response_data.get("response", "").strip()
+            
+            if not full_response:
+                raise Exception("Ollama 모델로부터 응답을 받지 못했습니다.")
+            
+            return full_response
+            
+        except requests.exceptions.Timeout:
+            raise Exception(f"API 호출 시간 초과 ({timeout}초)")
+        except requests.exceptions.ConnectionError:
+            raise Exception(f"RunPod 연결 실패: {self.runpod_url}")
+        except Exception as e:
+            raise Exception(f"API 호출 중 오류 발생: {str(e)}")
     
     def parse_interpretation_response(self, response: str) -> Tuple[str, str]:
         """
