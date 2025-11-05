@@ -17,7 +17,7 @@ AI 기반 타로 카드 해석 웹 애플리케이션입니다. EEVE 한국어 �
 ## 🏗️ 프로젝트 구조
 
 ```
-eeve-llm-project/
+tarot-game/
 ├── backend/                    # FastAPI 백엔드 서버
 │   ├── main.py                # FastAPI 애플리케이션 진입점
 │   ├── controller.py          # API 엔드포인트 컨트롤러
@@ -75,53 +75,12 @@ eeve-llm-project/
 - **PyTorch**: 딥러닝 프레임워크
 
 ## 🚀 시작하기
-
-### 사전 요구사항
-
-- Python 3.10 이상
-- Node.js 18 이상
-- Git
-
-### 1. 레포지토리 클론
-
-```bash
-git clone https://github.com/MinJeung-Kim/EEVE-TarotGame.git
-cd eeve-llm-project
-```
-
-### 2. Backend 설정
-
-#### 2.1 가상환경 생성 및 활성화
-
-```bash
-# Windows (Git Bash)
-cd backend
-python -m venv .venv
-source .venv/Scripts/activate
-
-# Linux/Mac
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-#### 2.2 패키지 설치
+  
+### 1. Backend 설정
+#### 1-1. 패키지 설치
 
 ```bash
 pip install -r requirements.txt
-```
-
-#### 2.3 환경 변수 설정
-
-`.env` 파일을 `backend/` 디렉토리에 생성하고 다음 내용을 입력합니다:
-
-```env
-# RunPod 설정
-RUNPOD_ID=your-runpod-id
-RUNPOD_URL=https://your-runpod-id-8000.proxy.runpod.net
-
-# EEVE 모델 설정
-EEVE_MODEL=yanolja/EEVE-Korean-10.8B-v1.0
 ```
 
 **RunPod 설정 방법:**
@@ -129,7 +88,7 @@ EEVE_MODEL=yanolja/EEVE-Korean-10.8B-v1.0
 2. `eeve-fastapi` 디렉토리의 Docker 이미지 배포
 3. 생성된 RunPod ID를 `.env` 파일에 입력
 
-#### 2.4 백엔드 서버 실행
+#### 1-3. 백엔드 서버 실행
 
 ```bash
 # main.py로 실행
@@ -144,7 +103,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 - API 문서: http://localhost:8000/docs
 - Health Check: http://localhost:8000/health
 
-### 3. Frontend 설정
+### 2. Frontend 설정
 
 새 터미널을 열고:
 
@@ -156,7 +115,7 @@ npm run dev
 
 프론트엔드가 실행되면 http://localhost:5173 에서 접근할 수 있습니다.
 
-### 4. EEVE 모델 서버 배포 (선택사항)
+### 3. EEVE 모델 서버 배포 (RunPod 인스턴스 생성을 위한)
 
 RunPod에 EEVE 모델 서버를 배포하려면:
 
@@ -213,17 +172,7 @@ docker push your-dockerhub-username/eeve-model-server:latest
   "response": "카드가 전하는 메시지를 바탕으로..."
 }
 ```
-
-### 3. Health Check
-
-**Endpoint:** `GET /health`
-
-**Response:**
-```json
-{
-  "status": "healthy"
-}
-```
+ 
 
 ## 🎯 주요 컴포넌트 설명
 
@@ -267,43 +216,7 @@ docker push your-dockerhub-username/eeve-model-server:latest
 - 백엔드 API 호출 함수
 - 에러 처리 및 로깅
 - 서버 상태 확인
-
-## 🔧 개발 가이드
-
-### 백엔드 개발
-
-```bash
-cd backend
-
-# 개발 모드로 실행 (hot reload)
-uvicorn main:app --reload
-
-# 테스트
-pytest tests/
-
-# 코드 포맷팅
-black .
-isort .
-```
-
-### 프론트엔드 개발
-
-```bash
-cd frontend
-
-# 개발 서버 실행
-npm run dev
-
-# 빌드
-npm run build
-
-# 린트
-npm run lint
-
-# 프리뷰
-npm run preview
-```
-
+ 
 ## 🐛 트러블슈팅
 
 ### Backend 서버 연결 실패
@@ -350,38 +263,21 @@ EEVE_MODEL=yanolja/EEVE-Korean-10.8B-v1.0
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 라이센스
-
-이 프로젝트는 개인 학습 목적으로 제작되었습니다.
-
-## 👥 제작자
-
-- **GitHub**: [@MinJeung-Kim](https://github.com/MinJeung-Kim)
-- **Repository**: [EEVE-TarotGame](https://github.com/MinJeung-Kim/EEVE-TarotGame)
-
-## 🙏 감사의 말
-
-- [Yanolja EEVE Model](https://huggingface.co/yanolja/EEVE-Korean-10.8B-v1.0) - 한국어 언어 모델 제공
-- [RunPod](https://www.runpod.io/) - GPU 인프라 제공
-- [FastAPI](https://fastapi.tiangolo.com/) - 백엔드 프레임워크
-- [React](https://react.dev/) - 프론트엔드 라이브러리
+ 
 
 ## 📚 참고 자료
 
+- [RunPod](https://console.runpod.io/)
 - [EEVE Model Documentation](https://huggingface.co/yanolja/EEVE-Korean-10.8B-v1.0)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [React Documentation](https://react.dev/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/)
-
----
-
-**Note**: 이 프로젝트는 교육 및 학습 목적으로 제작되었으며, 타로 카드 해석은 엔터테인먼트 목적으로만 사용해야 합니다. 🔮
+ 
+ 
+## 📺 구현 화면
+<img src="./images/image1.png">
+<img src="./images/image2.png">
+<img src="./images/image3.png">
+<img src="./images/image4.png"> 
+<img src="./images/image6.png">
+<img src="./images/image7.png">
