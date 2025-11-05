@@ -1,4 +1,4 @@
-import { Sparkles, RotateCcw, Save, MessageCircle } from 'lucide-react';
+import { Sparkles, RotateCcw, MessageCircle, Coins } from 'lucide-react';
 import type { TarotCard, ChatMessage } from '../utills/types';
 
 interface ResultScreenProps {
@@ -152,8 +152,8 @@ export default function ResultScreen({
                 onClick={onSave}
                 className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-full hover:scale-105 transform transition"
                 style={{ cursor: "pointer", padding: '1rem' }}>
-                <Save className="w-5 h-5" />
-                결과 저장
+                <Coins className="w-5 h-5" />
+                복채 내기
               </button>
             </div>
           </>
