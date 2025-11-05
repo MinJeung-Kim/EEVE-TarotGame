@@ -124,7 +124,7 @@ class TarotService:
             num_predict: 생성할 최대 토큰 수
             
         Returns:
-            AI 응답 문자열 (프롬프트 제거됨)
+            AI 응답 문자열
             
         Raises:
             Exception: API 호출 실패 시
@@ -158,14 +158,33 @@ class TarotService:
             if not text:
                 raise Exception("RunPod로부터 응답을 받지 못했습니다.")
             
+            print(f"📥 Raw response length: {len(text)} characters")
+            print(f"📥 Raw response preview: {text[:200]}...")
+            
             # EEVE 모델은 프롬프트를 포함해서 반환하므로, 프롬프트 부분을 제거
             if text.startswith(prompt):
                 generated_text = text[len(prompt):].strip()
-                print(f"✂️ Removed prompt from response. Generated text length: {len(generated_text)}")
+                print(f"✂️ Removed prompt from response")
+                print(f"📊 Generated text length: {len(generated_text)} characters")
+                print(f"📊 Generated text preview: {generated_text[:200]}...")
                 return generated_text
-            
-            print(f"⚠️ Response doesn't start with prompt. Returning full text.")
-            return text
+            else:
+                # 프롬프트가 정확히 일치하지 않는 경우, 마지막 부분만 추출 시도
+                print(f"⚠️ Response doesn't start with exact prompt")
+                
+                # 프롬프트의 마지막 부분(질문 부분)을 찾아서 그 이후만 반환
+                prompt_lines = prompt.split('\n')
+                last_prompt_line = prompt_lines[-1] if prompt_lines else ""
+                
+                if last_prompt_line and last_prompt_line in text:
+                    split_index = text.find(last_prompt_line) + len(last_prompt_line)
+                    generated_text = text[split_index:].strip()
+                    print(f"✂️ Removed prompt using last line method")
+                    print(f"📊 Generated text length: {len(generated_text)} characters")
+                    return generated_text
+                
+                print(f"⚠️ Returning full text as-is")
+                return text
             
         except requests.exceptions.Timeout:
             raise Exception(f"API 호출 시간 초과 ({DEFAULT_TIMEOUT}초)")
@@ -184,6 +203,10 @@ class TarotService:
         Returns:
             (해석, 조언) 튜플
         """
+        print(f"🔍 Parsing response...")
+        print(f"🔍 Response preview: {response[:300]}...")
+        
+        # "2. 실천 조언" 키워드로 분리
         parts = response.split(RESPONSE_PARSE_KEYWORD_ADVICE)
         
         if len(parts) == 2:
@@ -194,12 +217,23 @@ class TarotService:
             advice = parts[1].strip()
             advice = advice.replace(RESPONSE_PARSE_KEYWORD_CHAR_COUNT_100_150, "").strip()
             advice = advice.strip(":")
+            
+            print(f"✅ Successfully parsed into interpretation and advice")
+            return interpretation.strip(), advice.strip()
         else:
-            # 분리 실패 시 전체를 해석으로, 간단한 조언 생성
-            interpretation = response
-            advice = DEFAULT_ADVICE
-        
-        return interpretation.strip(), advice.strip()
+            # 분리 실패 시 - 응답 전체를 해석으로 사용하고 기본 조언 반환
+            print(f"⚠️ Failed to parse response, using full text as interpretation")
+            print(f"⚠️ Looking for keyword: '{RESPONSE_PARSE_KEYWORD_ADVICE}'")
+            
+            # 응답이 너무 길면 절반으로 나누기
+            if len(response) > 500:
+                mid_point = len(response) // 2
+                interpretation = response[:mid_point].strip()
+                advice = response[mid_point:].strip()
+                print(f"⚠️ Split response by length instead")
+                return interpretation, advice
+            
+            return response.strip(), DEFAULT_ADVICE
     
     def interpret_tarot(self, question: str, cards: List[str]) -> Dict[str, str]:
         """
