@@ -1,12 +1,12 @@
+from dotenv import load_dotenv
 import requests
 import os
 from typing import List, Tuple, Dict
-from dotenv import load_dotenv
-from const import *
+from .const import *
 
 load_dotenv()
 
-RUNPOD_ID = os.getenv("RUNPOD_ID")
+RUNPOD_ID = os.getenv("RUNPOD_ID" , "iaswduw5p4i3za")
 RUNPOD_URL = f"https://{RUNPOD_ID}-8000.proxy.runpod.net"
  
 class TarotService:

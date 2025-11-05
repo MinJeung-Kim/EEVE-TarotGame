@@ -1,5 +1,5 @@
 // API 설정 및 타입 정의
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 interface TarotApiRequest {
   question: string;
@@ -46,7 +46,7 @@ export const fetchTarotInterpretation = async (
     return data;
   } catch (error) {
     console.error('❌ 타로 해석 API 호출 중 오류:', error);
-    console.error('💡 Backend 서버가 실행 중인지 확인하세요: http://localhost:8000/health');
+    console.error('💡 Backend 서버가 실행 중인지 확인하세요: http://localhost:8080/health');
     throw error;
   }
 };

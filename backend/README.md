@@ -45,26 +45,26 @@ python backend/main.py
 uvicorn backend.main:app --reload
 
 # backend 디렉토리에서
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 ### 5. 서버 확인
-- API 서버: http://localhost:8000
-- API 문서: http://localhost:8000/docs
-- 헬스 체크: http://localhost:8000/health
+- API 서버: http://localhost:8080
+- API 문서: http://localhost:8080/docs
+- 헬스 체크: http://localhost:8080/health
 
 ## 📡 API 엔드포인트
 
 ### GET /
 서버 상태 확인
 ```bash
-curl http://localhost:8000
+curl http://localhost:8080
 ```
 
 ### GET /health
 헬스 체크
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8080/health
 ```
 
 ### POST /api/interpret
@@ -88,7 +88,7 @@ curl http://localhost:8000/health
 
 **cURL 예제:**
 ```bash
-curl -X POST http://localhost:8000/api/interpret \
+curl -X POST http://localhost:8080/api/interpret \
   -H "Content-Type: application/json" \
   -d '{
     "question": "오늘의 운세는?",

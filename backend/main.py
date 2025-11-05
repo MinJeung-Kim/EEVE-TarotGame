@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from controller import TarotController, TarotRequest, TarotResponse, FollowUpRequest, FollowUpResponse
+from .controller import TarotController, TarotRequest, TarotResponse, FollowUpRequest, FollowUpResponse
 
 app = FastAPI(title="EEVE Tarot API")
 
@@ -37,4 +37,4 @@ async def followup_question(request: FollowUpRequest):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

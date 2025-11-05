@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import List
-from service import TarotService
+from .service import TarotService
 
 
 class TarotRequest(BaseModel):

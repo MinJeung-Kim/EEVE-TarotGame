@@ -95,13 +95,13 @@ pip install -r requirements.txt
 python main.py
 
 # 또는 uvicorn으로 실행
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn backend.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 서버가 실행되면 다음 URL로 접근할 수 있습니다:
-- API 서버: http://localhost:8000
-- API 문서: http://localhost:8000/docs
-- Health Check: http://localhost:8000/health
+- API 서버: http://localhost:8080
+- API 문서: http://localhost:8080/docs
+- Health Check: http://localhost:8080/health
 
 ### 2. Frontend 설정
 
