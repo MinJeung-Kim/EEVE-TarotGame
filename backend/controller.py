@@ -58,6 +58,8 @@ class TarotController:
                 question=request.question,
                 cards=request.cards
             )
+
+            print(f"========== result: {result} ========== ")
             
             # 응답 모델로 변환
             return TarotResponse(

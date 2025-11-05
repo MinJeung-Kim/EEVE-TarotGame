@@ -43,6 +43,9 @@ python backend/main.py
 
 # 방법 3: uvicorn으로 실행
 uvicorn backend.main:app --reload
+
+# backend 디렉토리에서
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 5. 서버 확인

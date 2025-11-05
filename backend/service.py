@@ -28,10 +28,10 @@ from const import (
 
 load_dotenv()
 
-# Runpod Ollama EEVE 모델 설정
-RUNPOD_ID = os.getenv("RUNPOD_ID", "joh58e7gyi9rhl")
-RUNPOD_URL = f"https://{RUNPOD_ID}-11434.proxy.runpod.net"
-EEVE_MODEL = os.getenv("EEVE_MODEL", "eeve-korean-10.8b:latest")
+# Runpod EEVE 모델 설정
+RUNPOD_ID = os.getenv("RUNPOD_ID")
+RUNPOD_URL = os.getenv("RUNPOD_URL", f"https://{RUNPOD_ID}-8000.proxy.runpod.net")
+EEVE_MODEL = os.getenv("EEVE_MODEL")
 
 
 class TarotService:
@@ -43,6 +43,12 @@ class TarotService:
         self.eeve_model = EEVE_MODEL
         print(f"🔮 Using Ollama EEVE Model: {self.eeve_model}")
         print(f"📡 Runpod URL: {self.runpod_url}")
+        
+        # 환경 변수 검증
+        if not RUNPOD_ID or RUNPOD_ID == "None":
+            raise ValueError("RUNPOD_ID 환경 변수가 설정되지 않았습니다. .env 파일을 확인해주세요.")
+        if not self.eeve_model or self.eeve_model == "None":
+            raise ValueError("EEVE_MODEL 환경 변수가 설정되지 않았습니다. .env 파일을 확인해주세요.")
     
     def get_card_keywords(self, cards: List[str]) -> str:
         """
@@ -55,7 +61,6 @@ class TarotService:
             카드별 키워드를 포함한 문자열
         """
 
-        print(f"Getting card keywords... RUNPOD_URL: {RUNPOD_URL} , EEVE_MODEL: {EEVE_MODEL}")
         card_context = []
         for card_name in cards:
             if card_name in CARD_MEANINGS:
@@ -105,65 +110,62 @@ class TarotService:
     def call_ollama_api(
         self, 
         prompt: str, 
+        model: str = None,
         temperature: float = DEFAULT_TEMPERATURE, 
-        num_predict: int = DEFAULT_NUM_PREDICT_INTERPRETATION,
-        timeout: int = DEFAULT_TIMEOUT
+        num_predict: int = DEFAULT_NUM_PREDICT_INTERPRETATION
     ) -> str:
         """
-        Ollama API 호출 (RunPod 프록시를 통해)
+        RunPod 커스텀 EEVE 엔드포인트 호출
         
         Args:
             prompt: API에 전달할 프롬프트
+            model: 사용할 모델명 (사용되지 않음, 호환성 유지용)
             temperature: 생성 온도 (0.0~1.0)
             num_predict: 생성할 최대 토큰 수
-            timeout: API 타임아웃 (초)
             
         Returns:
-            API 응답 문자열
+            AI 응답 문자열
             
         Raises:
             Exception: API 호출 실패 시
         """
-        # RunPod의 Ollama API 엔드포인트
-        api_endpoint = f"{self.runpod_url}"
+        api_endpoint = f"{self.runpod_url}/generate"
         
         payload = {
-            "model": self.eeve_model,
             "prompt": prompt,
-            "stream": False,
-            "options": {
-                "temperature": temperature,
-                "num_predict": num_predict
-            }
+            "temperature": temperature,
+            "max_tokens": num_predict
         }
+        
+        print(f"🔗 Calling RunPod Endpoint: {api_endpoint}")
         
         try:
             response = requests.post(
                 api_endpoint,
                 json=payload,
-                timeout=timeout
+                timeout=DEFAULT_TIMEOUT
             )
             
             if response.status_code != 200:
                 raise Exception(
-                    f"Ollama API 오류: {response.status_code} - {response.text}"
+                    f"RunPod API 오류: {response.status_code} - {response.text}"
                 )
             
-            response_data = response.json()
-            full_response = response_data.get("response", "").strip()
+            data = response.json()
+            text = data.get("text", "").strip()
             
-            if not full_response:
-                raise Exception("Ollama 모델로부터 응답을 받지 못했습니다.")
+            if not text:
+                raise Exception("RunPod로부터 응답을 받지 못했습니다.")
             
-            return full_response
+            return text
             
         except requests.exceptions.Timeout:
-            raise Exception(f"API 호출 시간 초과 ({timeout}초)")
+            raise Exception(f"API 호출 시간 초과 ({DEFAULT_TIMEOUT}초)")
         except requests.exceptions.ConnectionError:
             raise Exception(f"RunPod 연결 실패: {self.runpod_url}")
         except Exception as e:
             raise Exception(f"API 호출 중 오류 발생: {str(e)}")
-    
+
     def parse_interpretation_response(self, response: str) -> Tuple[str, str]:
         """
         AI 응답을 해석과 조언으로 분리
@@ -208,8 +210,12 @@ class TarotService:
         # 프롬프트 생성
         prompt = self.build_interpretation_prompt(question, cards)
         
-        # Ollama API 호출
-        full_response = self.call_ollama_api(prompt)
+        # Ollama API 호출 (해석용 긴 응답)
+        full_response = self.call_ollama_api(
+            prompt,
+            temperature=DEFAULT_TEMPERATURE,
+            num_predict=DEFAULT_NUM_PREDICT_INTERPRETATION
+        )
         
         # 응답 파싱
         interpretation, advice = self.parse_interpretation_response(full_response)
@@ -256,7 +262,7 @@ class TarotService:
         # 프롬프트 생성
         prompt = self.build_followup_prompt(question, cards)
         
-        # Ollama API 호출 (더 짧은 응답)
+        # Ollama API 호출 (추가 질문용 짧은 응답)
         response = self.call_ollama_api(
             prompt, 
             temperature=DEFAULT_TEMPERATURE, 

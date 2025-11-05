@@ -17,25 +17,48 @@ from controller import (
 # FastAPI 애플리케이션 초기화
 app = FastAPI(title="EEVE Tarot API")
 
-# CORS 설정
+# CORS 설정 - 프론트엔드에서 접근 허용
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "*"  # 개발 중에는 모든 origin 허용
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # 컨트롤러 인스턴스 생성
 tarot_controller = TarotController()
 
 
+@app.get("/")
+async def root():
+    """루트 엔드포인트 - 서버 상태 확인"""
+    return {
+        "message": "EEVE Tarot API is running",
+        "version": "1.0",
+        "endpoints": ["/api/interpret", "/api/followup"]
+    }
+
+
+@app.get("/health")
+async def health():
+    """헬스 체크 엔드포인트"""
+    return {"status": "healthy"}
+
+ 
 @app.post("/api/interpret", response_model=TarotResponse)
 async def interpret_tarot(request: TarotRequest):
     """
     타로 카드 해석 API - Ollama EEVE 모델 사용
     컨트롤러에 요청을 위임
     """
+ 
     return await tarot_controller.interpret_tarot(request)
 
 
