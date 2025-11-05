@@ -58,8 +58,12 @@ async def interpret_tarot(request: TarotRequest):
     타로 카드 해석 API - Ollama EEVE 모델 사용
     컨트롤러에 요청을 위임
     """
- 
-    return await tarot_controller.interpret_tarot(request)
+    print("🔮 Tarot Interpretation Result:")
+    result = await tarot_controller.interpret_tarot(request)
+    
+    print(result)
+    
+    return result
 
 
 @app.post("/api/followup", response_model=FollowUpResponse)

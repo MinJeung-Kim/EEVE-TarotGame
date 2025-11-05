@@ -124,7 +124,7 @@ class TarotService:
             num_predict: 생성할 최대 토큰 수
             
         Returns:
-            AI 응답 문자열
+            AI 응답 문자열 (프롬프트 제거됨)
             
         Raises:
             Exception: API 호출 실패 시
@@ -138,6 +138,7 @@ class TarotService:
         }
         
         print(f"🔗 Calling RunPod Endpoint: {api_endpoint}")
+        print(f"📝 Prompt length: {len(prompt)} characters")
         
         try:
             response = requests.post(
@@ -157,6 +158,13 @@ class TarotService:
             if not text:
                 raise Exception("RunPod로부터 응답을 받지 못했습니다.")
             
+            # EEVE 모델은 프롬프트를 포함해서 반환하므로, 프롬프트 부분을 제거
+            if text.startswith(prompt):
+                generated_text = text[len(prompt):].strip()
+                print(f"✂️ Removed prompt from response. Generated text length: {len(generated_text)}")
+                return generated_text
+            
+            print(f"⚠️ Response doesn't start with prompt. Returning full text.")
             return text
             
         except requests.exceptions.Timeout:
@@ -209,6 +217,9 @@ class TarotService:
         """
         # 프롬프트 생성
         prompt = self.build_interpretation_prompt(question, cards)
+
+        print("🔮 Interpretation Prompt:")
+        print(prompt)
         
         # Ollama API 호출 (해석용 긴 응답)
         full_response = self.call_ollama_api(
