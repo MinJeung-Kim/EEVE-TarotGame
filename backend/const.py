@@ -1,8 +1,5 @@
-"""
-타로 카드 애플리케이션 상수 정의
-"""
+"""타로 카드 애플리케이션 상수"""
 
-# 타로 카드별 키워드 매핑
 CARD_MEANINGS = {
     "바보": ["새로운 시작", "순수함", "모험"],
     "마법사": ["창조", "의지", "기술"],
@@ -28,13 +25,6 @@ CARD_MEANINGS = {
     "세계": ["완성", "성취", "통합"]
 }
 
-# 타로 리더 시스템 프롬프트
-TAROT_READER_SYSTEM_PROMPT = """당신은 경험 많은 타로 리더입니다. 
-타로 카드의 의미를 깊이 이해하고, 상담자의 질문에 대해 영적이고 공감적인 해석을 제공합니다.
-해석은 한국어로 작성하며, 신비롭고 따뜻한 어조를 유지합니다.
-구체적이고 실용적인 조언을 포함하되, 희망적인 메시지를 전달합니다."""
-
-# 타로 해석 프롬프트 템플릿
 INTERPRETATION_PROMPT_TEMPLATE = """다음 타로 리딩을 해석해주세요:
 
 스프레드 타입: {spread_type}
@@ -54,14 +44,6 @@ INTERPRETATION_PROMPT_TEMPLATE = """다음 타로 리딩을 해석해주세요:
    - 구체적이고 실천 가능한 조언
    - 긍정적이고 희망적인 메시지"""
 
-# 추가 질문 시스템 프롬프트
-FOLLOWUP_SYSTEM_PROMPT = """당신은 경험 많은 타로 리더입니다. 
-이미 타로 카드를 뽑은 상담자가 추가적인 질문을 하고 있습니다.
-이전에 뽑은 카드들의 의미를 바탕으로 상담자의 추가 질문에 대해 
-구체적이고 공감적인 답변을 제공하세요.
-답변은 한국어로 작성하며, 따뜻하고 지지적인 어조를 유지합니다."""
-
-# 추가 질문 프롬프트 템플릿
 FOLLOWUP_PROMPT_TEMPLATE = """상담자가 이전에 다음 카드들을 뽑았습니다: {cards_str}
 
 상담자의 추가 질문: {question}
@@ -69,20 +51,16 @@ FOLLOWUP_PROMPT_TEMPLATE = """상담자가 이전에 다음 카드들을 뽑았�
 이 질문에 대해 이미 뽑은 카드들의 의미를 바탕으로 150-250자 정도로 답변해주세요.
 카드들이 전하는 메시지와 연결하여 구체적이고 실천 가능한 조언을 제공하세요."""
 
-# 스프레드 타입
 SPREAD_TYPE_ONE_CARD = "원 카드 리딩"
 SPREAD_TYPE_THREE_CARD = "쓰리 카드 리딩 (과거-현재-미래)"
 
-# 기본 조언 메시지
 DEFAULT_ADVICE = "카드가 전하는 메시지를 마음 깊이 받아들이시고, 긍정적인 마음으로 한 걸음씩 나아가세요. 🌟"
 
-# 응답 파싱 키워드
 RESPONSE_PARSE_KEYWORD_ADVICE = "2. 실천 조언"
 RESPONSE_PARSE_KEYWORD_INTERPRETATION = "1. 카드 해석"
 RESPONSE_PARSE_KEYWORD_CHAR_COUNT_200_300 = "(200-300자):"
 RESPONSE_PARSE_KEYWORD_CHAR_COUNT_100_150 = "(100-150자):"
 
-# API 기본 설정
 DEFAULT_TEMPERATURE = 0.8
 DEFAULT_NUM_PREDICT_INTERPRETATION = 800
 DEFAULT_NUM_PREDICT_FOLLOWUP = 400
