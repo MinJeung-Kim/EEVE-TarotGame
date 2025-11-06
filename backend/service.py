@@ -6,7 +6,7 @@ from .const import *
 
 load_dotenv()
 
-RUNPOD_ID = os.getenv("RUNPOD_ID" , "iaswduw5p4i3za")
+RUNPOD_ID = os.getenv("RUNPOD_ID" , "159080sevh9u7u")
 RUNPOD_URL = f"https://{RUNPOD_ID}-8000.proxy.runpod.net"
  
 class TarotService:
